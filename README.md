@@ -32,7 +32,7 @@ This app showcases what happens when AI-assisted development meets creativity, d
 - 📱 **Mobile-Friendly**: Designed for kids on tablets and phones
 - 🌈 **Playful Animations**: Gentle, kid-friendly motion and delight
 - ♿ **Accessible**: High contrast, clear typography, large touch targets
-- 🧪 **Test-Driven Development**: Built with TDD practices using Vitest
+- 🔒 **Content Safety**: Multi-layer filtering for kid-appropriate content
 
 ## 🚀 Getting Started
 
@@ -70,18 +70,21 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 ## 🏗️ Built With
 
-- **[Next.js 16](https://nextjs.org)** - React framework with App Router
-- **[React 19](https://react.dev)** - UI library
-- **[TypeScript](https://www.typescriptlang.org)** - Type safety with strict mode
-- **[Tailwind CSS 4](https://tailwindcss.com)** - Utility-first styling with OKLCH colors
-- **[shadcn/ui](https://ui.shadcn.com)** - Beautiful, accessible components (Radix UI)
-- **[Vercel AI SDK](https://sdk.vercel.ai)** - AI integration with streaming
-- **[OpenAI gpt-5-nano](https://platform.openai.com)** - Language model for chat and content
-- **[Vitest](https://vitest.dev)** - Testing framework with React Testing Library
-- **[MSW](https://mswjs.io)** - API mocking for tests
-- **[PokeAPI](https://pokeapi.co)** - Pokémon data
-- **[Lucide React](https://lucide.dev)** - Icons
-- **[React Hook Form](https://react-hook-form.com)** - Form validation with Zod
+### Core Framework & UI
+- **[Next.js 16](https://nextjs.org)** - React framework with App Router and SSR
+- **[React 19](https://react.dev)** - UI library with Server and Client Components
+- **[TypeScript](https://www.typescriptlang.org)** - Type safety with strict mode throughout
+- **[Tailwind CSS 4](https://tailwindcss.com)** - Utility-first styling with OKLCH color space
+- **[Radix UI](https://www.radix-ui.com)** - Accessible component primitives (via shadcn/ui)
+
+### AI Integration
+- **[Vercel AI SDK](https://sdk.vercel.ai)** - AI integration with streaming and structured outputs
+- **[OpenAI GPT-5-nano](https://platform.openai.com)** - Fast, cost-effective language model
+- **[Zod](https://zod.dev)** - Runtime schema validation for AI responses
+
+### External Services
+- **[PokeAPI](https://pokeapi.co)** - Free Pokémon data (no auth required)
+- **[Lucide React](https://lucide.dev)** - Beautiful icon system
 
 ## 📝 Available Scripts
 
@@ -103,35 +106,151 @@ PokéPals Interactive includes three delightful themes:
 
 Switch themes using the theme switcher on any page! All themes use OKLCH color space for perceptually uniform colors.
 
+## 🏗️ Architecture
+
+### System Overview
+
+PokéPals Interactive follows a **three-tier layered architecture** built entirely with TypeScript and React:
+
+```mermaid
+graph TB
+    subgraph "Presentation Layer (Client)"
+        UI[React Components<br/>Server & Client]
+        Pages[Next.js Pages<br/>SSR]
+    end
+
+    subgraph "Business Logic Layer (API Routes)"
+        API[7 AI Endpoints<br/>/api/llm/*]
+        Validation[Zod Schemas<br/>Type Safety]
+    end
+
+    subgraph "Data/Infrastructure Layer"
+        PokeAPI[PokeAPI<br/>Pokémon Data]
+        OpenAI[OpenAI<br/>GPT-5-nano]
+        Storage[LocalStorage<br/>Theme State]
+    end
+
+    UI --> Pages
+    Pages --> API
+    API --> Validation
+    Validation --> OpenAI
+    UI --> PokeAPI
+    UI --> Storage
+
+    style UI fill:#ff6ec7,stroke:#333,color:#fff
+    style API fill:#4ecdc4,stroke:#333
+    style OpenAI fill:#95e1d3,stroke:#333
+```
+
+**Layer Responsibilities:**
+
+1. **Presentation Layer** (`/app`, `/components`)
+   - Server Components for initial SSR renders
+   - Client Components marked with `"use client"` for interactivity
+   - Theme switching via React Context + CSS custom properties
+
+2. **Business Logic Layer** (`/app/api/llm/*`)
+   - 7 AI endpoints: chat, quiz, story, query-pokeapi, game-hints, color-prompt, fun-fact
+   - Content safety filtering with blocked pattern detection
+   - 30-second timeout protection (`maxDuration = 30`)
+   - Zod schema validation for structured outputs
+
+3. **Data/Infrastructure Layer**
+   - **PokeAPI**: Direct client-side fetch (public API, no auth)
+   - **OpenAI**: Server-side via Vercel AI SDK (API key required)
+   - **LocalStorage**: Client-side theme preference persistence
+
+### Data Flow Patterns
+
+The application implements four main data flow patterns:
+
+```mermaid
+flowchart LR
+    User[User] --> Client[Client Components]
+    Client --> |Direct Fetch| PokeAPI[PokeAPI]
+    Client --> |POST Request| APIRoute[API Routes]
+    APIRoute --> |AI SDK| OpenAI[OpenAI]
+    Client --> |Read/Write| LocalStorage[LocalStorage]
+
+    style Client fill:#ff6ec7,stroke:#333,color:#fff
+    style APIRoute fill:#4ecdc4,stroke:#333
+    style OpenAI fill:#95e1d3,stroke:#333
+```
+
+**Pattern Types:**
+1. **Direct API Pattern**: Pokémon data fetched directly from PokeAPI (client-side)
+2. **Streaming AI Pattern**: Chat uses Server-Sent Events (SSE) for real-time responses
+3. **Structured Generation**: Quiz/Story/Search use `generateObject()` with Zod schemas
+4. **Theme Management**: React Context + localStorage + CSS custom properties
+
+For detailed architecture documentation, see [`architecture/`](./architecture/README.md).
+
 ## 🗂️ Project Structure
 
 ```
 poke-pals-interactive/
-├── app/                    # Next.js App Router pages
-│   ├── api/llm/            # AI route handlers (7 endpoints)
-│   │   ├── chat/           # Professor Pine chat with content filtering
-│   │   ├── story/          # Story generation
-│   │   ├── quiz/           # Quiz generation
-│   │   ├── fun-fact/       # Fun fact generation
-│   │   ├── game-hints/     # Game hint generation
-│   │   ├── color-prompt/   # Color playground prompts
-│   │   └── query-pokeapi/  # Natural language PokeAPI queries
-│   ├── explore/            # Pokémon exploration page
-│   ├── chat/               # Professor Pine chat interface
-│   ├── games/              # Games hub
-│   ├── stories/            # Story builder
-│   ├── themes/             # Theme switcher
-│   ├── layout.tsx          # Root layout with theme provider
-│   ├── page.tsx            # Home page
-│   └── globals.css         # Global styles and theme variables
-├── components/             # React components
-│   ├── ui/                 # shadcn/ui components
-│   ├── games/              # Game components
-│   ├── navigation.tsx      # Responsive navigation
-│   ├── professor-pine-chat.tsx  # Chat UI component
-│   └── theme-provider.tsx  # Custom theme context
-├── lib/                    # Utility functions
-└── public/                 # Static assets
+├── app/                      # Next.js App Router (pages & API)
+│   ├── api/llm/              # AI route handlers (7 endpoints)
+│   │   ├── chat/             # Streaming chat with Professor Pine
+│   │   ├── story/            # Story generation with AI
+│   │   ├── quiz/             # Quiz question generation
+│   │   ├── fun-fact/         # Fun fact generation
+│   │   ├── game-hints/       # Progressive game hints
+│   │   ├── color-prompt/     # Art prompt generation
+│   │   └── query-pokeapi/    # Natural language Pokémon search
+│   ├── explore/              # Pokémon exploration page
+│   ├── chat/                 # Professor Pine chat interface
+│   ├── games/                # Interactive games hub
+│   ├── stories/              # AI story builder
+│   ├── themes/               # Theme switcher page
+│   ├── layout.tsx            # Root layout with ThemeProvider
+│   ├── page.tsx              # Homepage
+│   └── globals.css           # Global styles + theme CSS variables
+│
+├── components/               # React components
+│   ├── ui/                   # Radix UI primitives (shadcn/ui)
+│   │   ├── button.tsx        # Button component (6 variants)
+│   │   ├── card.tsx          # Card container component
+│   │   ├── input.tsx         # Form input component
+│   │   ├── dialog.tsx        # Modal dialog component
+│   │   └── tabs.tsx          # Accessible tab component
+│   ├── games/                # Game feature components
+│   │   ├── guess-game.tsx    # "Who's That Creature" game
+│   │   ├── quiz-game.tsx     # AI-powered quiz game
+│   │   └── color-playground.tsx  # Creative drawing game
+│   ├── professor-pine-chat.tsx   # AI chat UI component
+│   ├── pokemon-explorer.tsx      # Pokémon browser/search
+│   ├── pokemon-grid.tsx          # Pokémon card grid display
+│   ├── story-builder.tsx         # Interactive story builder
+│   ├── theme-provider.tsx        # Theme context provider
+│   ├── theme-switcher.tsx        # Theme selection UI
+│   ├── navigation.tsx            # App navigation
+│   ├── page-wrapper.tsx          # Consistent page layout
+│   └── ...                       # Additional feature components
+│
+├── lib/                      # Utilities and helpers
+│   └── utils.ts              # cn() helper for Tailwind
+│
+├── architecture/             # Comprehensive architecture docs
+│   ├── README.md             # Architecture overview
+│   ├── diagrams/             # Mermaid architecture diagrams
+│   └── docs/                 # Detailed documentation
+│
+├── next.config.ts            # Next.js configuration
+├── tsconfig.json             # TypeScript configuration (strict mode)
+├── tailwind.config.ts        # Tailwind CSS configuration
+└── package.json              # Dependencies and scripts
+```
+
+### Path Aliases
+
+The project uses TypeScript path aliases for clean imports:
+
+```typescript
+// tsconfig.json configured with @/* → ./*
+import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
+import { PokemonGrid } from '@/components/pokemon-grid'
 ```
 
 ## 🔒 Content Safety
@@ -145,17 +264,16 @@ This app is designed for kids ages 6-10 with multiple safety layers:
 - **Topic Redirection**: Scary/inappropriate topics redirected to positive ones
 - **No Personal Data**: Never collects or shares personal information
 
-## 🧪 Testing
+## 🧪 Testing Strategy
 
-Built with Test-Driven Development (TDD) practices:
+This project is designed for testing but test files are not currently in the repository. When adding tests, consider:
 
-- **Contract Tests**: Validate API endpoint behavior
-- **Integration Tests**: Test component interactions and user journeys
-- **Vitest + React Testing Library**: Modern testing stack
-- **MSW**: Mock API responses for reliable tests
-- **Red-Green-Refactor**: Write failing tests first, then implement
+- **API Endpoint Tests**: Validate AI route behavior and response formats
+- **Component Tests**: Test user interactions and component rendering
+- **Integration Tests**: Verify end-to-end user journeys
+- **Recommended Tools**: Vitest + React Testing Library + MSW for API mocking
 
-Run tests with `npm test` or `npm run test:watch` for TDD workflow.
+The architecture is built with testability in mind, with clear separation between presentation, business logic, and data layers.
 
 ## 🤝 Contributing
 
@@ -163,20 +281,28 @@ This is a learning project built during the AI Engineer Onramp Bootcamp. Feel fr
 
 ## 📚 Learn More
 
-### About Next.js & React
-- [Next.js Documentation](https://nextjs.org/docs)
-- [Learn Next.js](https://nextjs.org/learn)
+### Framework & Core Technologies
+- [Next.js Documentation](https://nextjs.org/docs) - App Router, Server Components, API Routes
+- [React Documentation](https://react.dev) - React 19 features and best practices
+- [TypeScript Handbook](https://www.typescriptlang.org/docs/) - TypeScript patterns and features
 - [Next.js GitHub repository](https://github.com/vercel/next.js)
 
-### About AI Development
-- [Vercel AI SDK Documentation](https://sdk.vercel.ai)
-- [AI Makerspace](https://github.com/AI-Maker-Space)
-- [Cursor AI IDE](https://cursor.com)
+### AI Integration
+- [Vercel AI SDK Documentation](https://sdk.vercel.ai) - Streaming, structured outputs, React hooks
+- [OpenAI API Reference](https://platform.openai.com/docs/api-reference) - GPT models and capabilities
+- [Zod Documentation](https://zod.dev) - Schema validation and type safety
 
-### About Testing
-- [Vitest Documentation](https://vitest.dev)
-- [Testing Library](https://testing-library.com)
-- [MSW Documentation](https://mswjs.io)
+### UI & Styling
+- [Tailwind CSS Documentation](https://tailwindcss.com/docs) - Utility-first CSS framework
+- [Radix UI Documentation](https://www.radix-ui.com) - Accessible component primitives
+- [shadcn/ui](https://ui.shadcn.com) - Component patterns and examples
+
+### External APIs
+- [PokeAPI Documentation](https://pokeapi.co/docs/v2) - Pokémon data API reference
+
+### Learning Resources
+- [AI Makerspace](https://github.com/AI-Maker-Space) - AI Engineer Onramp Bootcamp
+- [Learn Next.js](https://nextjs.org/learn) - Interactive Next.js course
 
 ## 🚀 Deploy on Vercel
 

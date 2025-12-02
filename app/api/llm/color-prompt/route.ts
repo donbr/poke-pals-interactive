@@ -1,4 +1,5 @@
 import { generateObject } from "ai"
+import { openai } from "@ai-sdk/openai"
 import { z } from "zod"
 
 const colorPromptSchema = z.object({
@@ -9,10 +10,9 @@ const colorPromptSchema = z.object({
 export async function POST() {
   try {
     const { object } = await generateObject({
-      model: "openai/gpt-5-mini",
+      model: openai("gpt-5-nano"),
       schema: colorPromptSchema,
-      temperature: 0.9,
-      maxOutputTokens: 200,
+      maxOutputTokens: 3000,
       messages: [
         {
           role: "system",

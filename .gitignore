@@ -41,3 +41,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# ra_ directories
+ra_*/
+
+# uv.lock
+uv.lock

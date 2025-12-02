@@ -50,7 +50,9 @@ This includes:
 ### **Model**
 
 All LLM endpoints use:
-
+- the temperature and max_tokens ended up being inappropriate for a reasoning model
+  - exclude temperature
+  - set max tokens closer to 2000 is better 
 ```
 model: "gpt-5-nano"
 temperature: 0.7

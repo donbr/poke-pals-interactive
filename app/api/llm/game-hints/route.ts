@@ -1,4 +1,5 @@
 import { generateObject } from "ai"
+import { openai } from "@ai-sdk/openai"
 import { z } from "zod"
 
 const hintsSchema = z.object({
@@ -10,10 +11,9 @@ export async function POST(req: Request) {
 
   try {
     const { object } = await generateObject({
-      model: "openai/gpt-5-mini",
+      model: openai("gpt-5-nano"),
       schema: hintsSchema,
-      temperature: 0.8,
-      maxOutputTokens: 300,
+      maxOutputTokens: 3000,
       messages: [
         {
           role: "system",

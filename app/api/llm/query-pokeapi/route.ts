@@ -1,4 +1,5 @@
 import { generateObject } from "ai"
+import { openai } from "@ai-sdk/openai"
 import { z } from "zod"
 
 const searchFiltersSchema = z.object({
@@ -12,10 +13,9 @@ export async function POST(req: Request) {
 
   try {
     const { object } = await generateObject({
-      model: "openai/gpt-5-mini",
+      model: openai("gpt-5-nano"),
       schema: searchFiltersSchema,
-      temperature: 0.7,
-      maxOutputTokens: 500,
+      maxOutputTokens: 3000,
       messages: [
         {
           role: "system",
@@ -46,7 +46,11 @@ Example mappings:
   } catch (error) {
     console.error("Query parsing error:", error)
     // Fallback to random selection if AI fails
-    const randomIds = Array.from({ length: 6 }, () => Math.floor(Math.random() * 151) + 1)
+    const uniqueIds = new Set<number>()
+    while (uniqueIds.size < 6) {
+      uniqueIds.add(Math.floor(Math.random() * 151) + 1)
+    }
+    const randomIds = Array.from(uniqueIds)
     return Response.json({ types: [], traits: [], pokemonIds: randomIds })
   }
 }

@@ -1,4 +1,5 @@
 import { generateObject } from "ai"
+import { openai } from "@ai-sdk/openai"
 import { z } from "zod"
 
 const storyResponseSchema = z.object({
@@ -12,10 +13,9 @@ export async function POST(req: Request) {
   try {
     if (action === "start") {
       const { object } = await generateObject({
-        model: "openai/gpt-5-mini",
+        model: openai("gpt-5-nano"),
         schema: storyResponseSchema,
-        temperature: 0.8,
-        maxOutputTokens: 400,
+        maxOutputTokens: 3000,
         messages: [
           {
             role: "system",
@@ -41,10 +41,9 @@ Rules:
       return Response.json(object)
     } else {
       const { object } = await generateObject({
-        model: "openai/gpt-5-mini",
+        model: openai("gpt-5-nano"),
         schema: storyResponseSchema,
-        temperature: 0.8,
-        maxOutputTokens: 400,
+        maxOutputTokens: 3000,
         messages: [
           {
             role: "system",

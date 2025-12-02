@@ -1,4 +1,5 @@
 import { streamText, consumeStream, convertToModelMessages, type UIMessage } from "ai"
+import { openai } from "@ai-sdk/openai"
 
 export const maxDuration = 30
 
@@ -45,7 +46,7 @@ export async function POST(req: Request) {
     const blockedPatterns = /\b(kill|hate|weapon|violence|inappropriate|adult)\b/i
     if (blockedPatterns.test(content)) {
       const safeResponse = streamText({
-        model: "openai/gpt-5-mini",
+        model: openai("gpt-5-nano"),
         messages: [
           { role: "system", content: PROFESSOR_PINE_SYSTEM },
           { role: "user", content: "Tell me something fun about friendly creatures!" },
@@ -56,10 +57,9 @@ export async function POST(req: Request) {
   }
 
   const result = streamText({
-    model: "openai/gpt-5-mini",
+    model: openai("gpt-5-nano"),
     messages: [{ role: "system", content: PROFESSOR_PINE_SYSTEM }, ...convertToModelMessages(messages)],
-    temperature: 0.7,
-    maxOutputTokens: 300,
+    maxOutputTokens: 3000,
     abortSignal: req.signal,
   })
 

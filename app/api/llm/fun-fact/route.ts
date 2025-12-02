@@ -1,13 +1,13 @@
 import { generateText } from "ai"
+import { openai } from "@ai-sdk/openai"
 
 export async function POST(req: Request) {
   const { name, types } = await req.json()
 
   try {
     const { text } = await generateText({
-      model: "openai/gpt-5-mini",
-      temperature: 0.8,
-      maxOutputTokens: 150,
+      model: openai("gpt-5-nano"),
+      maxOutputTokens: 3000,
       messages: [
         {
           role: "system",
