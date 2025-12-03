@@ -45,9 +45,11 @@ This documentation suite is designed for progressive exploration:
 
 | Document | Description | Best For |
 |----------|-------------|----------|
+| [Architecture Tour](./docs/06_architecture_tour.md) | **Start Here!** Guided walkthrough | Students, beginners, first-time readers |
 | [Architecture Diagrams](./diagrams/02_architecture_diagrams.md) | Visual system architecture | Onboarding, system design review |
 | [Data Flows](./docs/03_data_flows.md) | Sequence diagrams and flow analysis | Understanding request/response patterns |
 | [API Reference](./docs/04_api_reference.md) | Complete API documentation | Implementing features, integration |
+| [Agentic Patterns](./docs/05_agentic_patterns.md) | Advanced cognitive architecture | Understanding AI decision making |
 
 ---
 
@@ -694,4 +696,4 @@ This documentation provides everything needed for developers to understand, main
 
 *Documentation generated: 2025-12-02*
 *Documentation covers: PokePals Interactive Architecture v1.0*
-*Repository: /home/donbr/aie-onramp/poke-pals-interactive*
+*Repository: https://github.com/donbr/poke-pals-interactive*

@@ -239,6 +239,62 @@ graph TD
     style OpenAI fill:#95e1d3,stroke:#333
 ```
 
+```
+
+## Global Data Journey
+
+### Description
+
+This high-level diagram unifies the architectural layers, showing the complete journey of data from the user's action through the server, AI orchestration, and back to the UI. It provides a "big picture" view of the system's cognitive flow.
+
+```mermaid
+graph LR
+    subgraph "Client Side"
+        User((User))
+        UI[UI Components]
+    end
+
+    subgraph "Server Side (Next.js)"
+        API[API Route Handler]
+        Safety[Safety Pipeline]
+    end
+
+    subgraph "Cognitive Layer"
+        Orchestrator{LLM Orchestrator<br/>GPT-5-nano}
+        Tools[Tool Execution]
+    end
+
+    subgraph "External Services"
+        OpenAI[OpenAI API]
+        PokeAPI[PokeAPI]
+    end
+
+    subgraph "Future State"
+        Memory[(Memory Layer)]
+    end
+
+    User -->|Action| UI
+    UI -->|Request| API
+    API -->|Validate| Safety
+    Safety -->|Safe Input| Orchestrator
+    
+    Orchestrator -->|Generate| OpenAI
+    Orchestrator -->|Route| Tools
+    
+    Tools -->|Fetch| PokeAPI
+    Tools -.->|Log| Memory
+    
+    OpenAI -->|Stream| API
+    Tools -->|Result| Orchestrator
+    
+    API -->|SSE Stream| UI
+    UI -->|Render| User
+
+    style User fill:#ffd93d,stroke:#333
+    style Orchestrator fill:#ff6ec7,stroke:#333,color:#fff
+    style Memory fill:#e2e8f0,stroke:#333,stroke-dasharray: 5 5
+```
+
 ## Data Flow
 
 ### Description
@@ -502,6 +558,52 @@ graph TB
     style StreamText fill:#4ecdc4,stroke:#333
     style GenObject fill:#4ecdc4,stroke:#333
     style GPT5Nano fill:#95e1d3,stroke:#333
+```
+
+## LLM Safety Pipeline
+
+### Description
+
+This diagram illustrates the specific safety measures implemented in the chat endpoint (`/api/llm/chat`). It visualizes the flow of data through pre-filters, system prompts, and the LLM to ensure a safe experience for children.
+
+```mermaid
+graph TD
+    subgraph "Input Processing"
+        UserMsg[User Message]
+        PreFilter{Pre-Filter Check<br/>Regex Patterns}
+    end
+
+    subgraph "Safety Logic"
+        Blocked[Blocked Content<br/>'kill', 'hate', etc.]
+        Safe[Safe Content]
+        SystemPrompt[System Prompt Injection<br/>Professor Pine Persona]
+    end
+
+    subgraph "LLM Interaction"
+        GPT[OpenAI GPT-5-nano]
+        Stream[SSE Stream Response]
+    end
+
+    subgraph "Fallback Mechanism"
+        SafetyFallback[Safety Fallback Message<br/>'Tell me something fun...']
+    end
+
+    UserMsg --> PreFilter
+    PreFilter -->|Match Found| Blocked
+    PreFilter -->|No Match| Safe
+
+    Blocked --> SafetyFallback
+    SafetyFallback --> Stream
+
+    Safe --> SystemPrompt
+    SystemPrompt --> GPT
+    GPT --> Stream
+
+    style PreFilter fill:#ffd93d,stroke:#333
+    style Blocked fill:#ff6b6b,stroke:#333,color:#fff
+    style Safe fill:#a8e6cf,stroke:#333
+    style SystemPrompt fill:#4ecdc4,stroke:#333
+    style SafetyFallback fill:#ff6b6b,stroke:#333,color:#fff
 ```
 
 ## File Organization
