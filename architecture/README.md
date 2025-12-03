@@ -45,7 +45,6 @@ This documentation suite is designed for progressive exploration:
 
 | Document | Description | Best For |
 |----------|-------------|----------|
-| [Component Inventory](./docs/01_component_inventory.md) | Complete catalog of Python components | Understanding Python integration |
 | [Architecture Diagrams](./diagrams/02_architecture_diagrams.md) | Visual system architecture | Onboarding, system design review |
 | [Data Flows](./docs/03_data_flows.md) | Sequence diagrams and flow analysis | Understanding request/response patterns |
 | [API Reference](./docs/04_api_reference.md) | Complete API documentation | Implementing features, integration |
@@ -611,8 +610,6 @@ import { cn } from '@/lib/utils'
 ## References
 
 ### Detailed Documentation
-
-- **[Component Inventory](./docs/01_component_inventory.md)** - Complete catalog of Python components (currently minimal). Shows the placeholder Python scaffolding with claude-agent-sdk dependency ready for future expansion.
 
 - **[Architecture Diagrams](./diagrams/02_architecture_diagrams.md)** - Visual representations of system architecture including:
   - System architecture (3-tier)

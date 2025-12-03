@@ -170,7 +170,6 @@ Optimized for Vercel deployment:
 ## Areas for Future Enhancement
 
 Based on architecture analysis (`/architecture/README.md:566-608`):
-- Python backend integration (claude-agent-sdk declared but unused)
 - PokeAPI response caching to reduce redundant requests
 - Service worker for offline support
 - Unit/E2E tests (Vitest, Playwright)
