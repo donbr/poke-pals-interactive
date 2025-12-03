@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useChat } from "@ai-sdk/react"
+import { useChat, type UIMessage } from "@ai-sdk/react"
 import { DefaultChatTransport } from "ai"
 import { useState, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
@@ -19,27 +19,27 @@ const suggestedQuestions = [
   "Tell me a fun story!",
 ]
 
+const WELCOME_MESSAGE: UIMessage = {
+  id: "welcome",
+  role: "assistant",
+  parts: [
+    {
+      type: "text",
+      text: "Hello there, young explorer! 🌟 I'm Professor Pine, your friendly guide to the wonderful world of pocket creatures! Ask me anything about these amazing friends - I love helping curious minds like yours discover new things! What would you like to know today?",
+    },
+  ],
+}
+
 export function ProfessorPineChat() {
   const [inputValue, setInputValue] = useState("")
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   const { messages, sendMessage, status, setMessages } = useChat({
     transport: new DefaultChatTransport({ api: "/api/llm/chat" }),
-    initialMessages: [
-      {
-        id: "welcome",
-        role: "assistant",
-        content:
-          "Hello there, young explorer! 🌟 I'm Professor Pine, your friendly guide to the wonderful world of pocket creatures! Ask me anything about these amazing friends - I love helping curious minds like yours discover new things! What would you like to know today?",
-        parts: [
-          {
-            type: "text",
-            text: "Hello there, young explorer! 🌟 I'm Professor Pine, your friendly guide to the wonderful world of pocket creatures! Ask me anything about these amazing friends - I love helping curious minds like yours discover new things! What would you like to know today?",
-          },
-        ],
-      },
-    ],
+    messages: [WELCOME_MESSAGE],
   })
+
+  const isBusy = status === "submitted" || status === "streaming"
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
@@ -51,31 +51,19 @@ export function ProfessorPineChat() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (!inputValue.trim() || status === "in_progress") return
+    if (!inputValue.trim() || isBusy) return
 
     sendMessage({ text: inputValue })
     setInputValue("")
   }
 
   const handleSuggestion = (question: string) => {
+    if (isBusy) return
     sendMessage({ text: question })
   }
 
   const handleReset = () => {
-    setMessages([
-      {
-        id: "welcome",
-        role: "assistant",
-        content:
-          "Hello there, young explorer! 🌟 I'm Professor Pine, your friendly guide to the wonderful world of pocket creatures! Ask me anything about these amazing friends - I love helping curious minds like yours discover new things! What would you like to know today?",
-        parts: [
-          {
-            type: "text",
-            text: "Hello there, young explorer! 🌟 I'm Professor Pine, your friendly guide to the wonderful world of pocket creatures! Ask me anything about these amazing friends - I love helping curious minds like yours discover new things! What would you like to know today?",
-          },
-        ],
-      },
-    ])
+    setMessages([WELCOME_MESSAGE])
   }
 
   return (
@@ -136,7 +124,7 @@ export function ProfessorPineChat() {
             </div>
           ))}
 
-          {status === "in_progress" && (
+          {isBusy && (
             <div className="flex gap-3">
               <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
                 <TreePine className="w-5 h-5 text-primary animate-wiggle" />
@@ -165,7 +153,11 @@ export function ProfessorPineChat() {
               <button
                 key={question}
                 onClick={() => handleSuggestion(question)}
-                className="bg-muted hover:bg-primary/10 px-3 py-2 rounded-full text-sm transition-colors"
+                disabled={isBusy}
+                className={cn(
+                  "bg-muted hover:bg-primary/10 px-3 py-2 rounded-full text-sm transition-colors",
+                  isBusy && "opacity-50 cursor-not-allowed",
+                )}
               >
                 {question}
               </button>
@@ -180,13 +172,13 @@ export function ProfessorPineChat() {
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           placeholder="Ask Professor Pine anything..."
-          disabled={status === "in_progress"}
+          disabled={isBusy}
           className="h-14 text-base rounded-full border-2 px-6"
         />
         <Button
           type="submit"
           size="lg"
-          disabled={status === "in_progress" || !inputValue.trim()}
+          disabled={isBusy || !inputValue.trim()}
           className="rounded-full px-6 h-14"
         >
           <Send className="w-5 h-5" />
