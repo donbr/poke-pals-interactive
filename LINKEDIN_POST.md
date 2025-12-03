@@ -1,67 +1,54 @@
 # 🚀 How do you teach AI Engineering?
 
-### Start small. Then go Agentic.
+I’ve found that the best way isn’t through big frameworks or theory-heavy lectures — it’s by starting with something small, building it step-by-step, and letting the system evolve naturally.
 
-I’m a big believer in **Incremental & Iterative Learning**.
-You don’t build a complex agentic system on Day 1.
-You *sketch*, you *learn*, and *then* you architect.
-
-To prove this, I built **PokéPals** as a teaching-grade example of how simple apps evolve into full AI systems.
+That’s how **PokéPals** came together.
 
 ---
 
-## **Phase 1: The Sketch — Poke-Pals**
+## **Phase 1 — Start Simple (Poke-Pals)**
 
-Start with the smallest artifact that teaches the domain.
+A basic Next.js app.
+No AI. No agents. Just data, UI, and a clear problem space.
 
-A simple, static Next.js app.
-No AI. No tools. Just UI, UX, and data fetching.
-The goal: **learn the problem space without cognitive overload.**
+🔗 [https://github.com/donbr/poke-pals](https://github.com/donbr/poke-pals)
+🔗 [https://poke-pals.vercel.app/pokemon](https://poke-pals.vercel.app/pokemon)
 
-� **Repo:** [https://github.com/donbr/poke-pals](https://github.com/donbr/poke-pals)
-� **Demo:** [https://poke-pals.vercel.app/pokemon](https://poke-pals.vercel.app/pokemon)
-
----
-
-## **Phase 2: The Agent — Poke-Pals Interactive**
-
-Once the foundation was solid, the project evolved into a real **agentic system**.
-Not a chatbot glued onto an app — but a proper cognitive architecture.
-
-🧠 **Router vs Generator Modes**
-The model decides when to be creative (stories, quizzes) and when to be precise (search filters, game hints).
-
-🛡 **Safety Pipeline ("Defense in Depth")**
-Regex filters + system prompts ensure kid-friendly content *before* the LLM sees input.
-
-🧩 **Tool Contracts (Zod)**
-The LLM must output *valid* JSON before the system will run a tool.
-
-� **Repo:** [https://github.com/donbr/poke-pals-interactive](https://github.com/donbr/poke-pals-interactive)
-� **Demo:** [https://poke-pals-interactive.vercel.app/](https://poke-pals-interactive.vercel.app/)
+The goal wasn’t “build something impressive.”
+It was “understand the domain and the constraints.”
 
 ---
 
-## **Teaching-Grade Documentation**
+## **Phase 2 — Add Intelligence (Poke-Pals Interactive)**
 
-Because the goal is education, the repo includes:
+Once the basics felt right, AI fit in more naturally.
 
-📘 **Architecture Tour** — A guided, narrative walkthrough (7 Tour Stops)
-📊 **Global Data Journey Diagram** — UI → API → Safety → LLM → Tools
-🎓 **Full Slide Deck** — Built for onboarding new AI engineers
+I added:
 
-All of these live in `/architecture/docs` inside the repo.
+* **Router vs Generator modes**
+* **A safety pipeline** so kids get consistent, safe responses
+* **Tool contracts** using Zod to keep outputs predictable
 
-If you're helping developers make the leap from traditional web apps → AI systems, this project is built to be read, remixed, and learned from.
+🔗 [https://github.com/donbr/poke-pals-interactive](https://github.com/donbr/poke-pals-interactive)
+🔗 [https://poke-pals-interactive.vercel.app/](https://poke-pals-interactive.vercel.app/)
+
+Nothing about this was overnight.
+Each feature was just the next small improvement.
 
 ---
 
-### **The Principle**
+## **Why I’m Sharing This**
 
-**Start with something tiny.
-Get it working.
-Then push it one layer deeper.**
+Not because the project is “important,”
+but because the **process** is teachable:
 
-That’s how people learn AI Engineering — and how real systems are built.
+Start with something tiny.
+Get one piece working.
+Improve it.
+Repeat.
 
-#AIEngineering #AgenticAI #NextJS #OpenAI #Vercel #SoftwareArchitecture #LearnInPublic #TypeScript #RAG #LLMTools
+If you’re helping people learn AI engineering, this approach lowers the pressure and keeps the learning curve humane.
+
+That’s all this is — one example of learning in small steps, made public in case it helps someone else.
+
+#AIEngineering #LearnInPublic #TypeScript #NextJS #OpenAI #AgenticAI
